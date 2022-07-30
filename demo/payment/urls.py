@@ -8,4 +8,5 @@ urlpatterns = [
     path('logout/', views.logout_page, name='logout_page'),
     path('payment/', views.payment_page, name='payment_page'),
     path('secret/<int:plan>', views.secret, name='secret'),
+    path('paymentsAPI', views.paymentsAPI, name='paymentsAPI'),
 ]

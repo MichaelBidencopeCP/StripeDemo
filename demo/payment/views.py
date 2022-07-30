@@ -4,12 +4,16 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse
 import stripe
+import os
 import dotenv
-dotenv.load_dotenv()
+import json
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+dotenv.load_dotenv(dotenv_path)
 
 
 
 
+end_point_secret = os.getenv('STRIPE_SIG')
 
 
 
@@ -56,7 +60,7 @@ def payment_page(request):
     return render(request, 'payment/payment.html')
 
 def secret(request, plan):
-    stripe.api_key ='sk_test_51LO2UzLsiHUppK8I0QtiH1Z9QcpYq96eJTC4wqzQ2nTjCNBdWoyWVCOJToXgnYrl5Hx61icdKHpC1vJt8EKtwScT00fJTquJwV'
+    stripe.api_key = os.getenv('STRIPE_PRIVATE_TOKEN')
     intent = stripe.PaymentIntent.create(
         amount= 1000 if plan == 0 else 2000,
         currency="usd",
@@ -66,3 +70,23 @@ def secret(request, plan):
     client_secret = {'secret':intent['client_secret']}
 
     return JsonResponse(client_secret)
+
+def paymentsAPI(request):
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            event = json.loads(data)
+        except:
+            print('⚠️  Webhook error while parsing basic request.' + str(e))
+            return JsonResponse(success=False)
+        if end_point_secret:
+            # Only verify the event if there is an endpoint secret defined
+            # Otherwise use the basic event deserialized with json
+            sig_header = request.headers.get('stripe-signature')
+            try:
+                event = stripe.Webhook.construct_event(
+                    data, sig_header, end_point_secret
+                )
+            except stripe.error.SignatureVerificationError as e:
+                print('⚠️  Webhook signature verification failed.' + str(e))
+                return JsonResponse(success=False)
