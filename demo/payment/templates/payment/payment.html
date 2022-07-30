@@ -104,7 +104,7 @@
             this.modal.show();
         }
         //submit payment
-        aync submit(){
+        async submit(){
             
             const {error} = await stripe.confirmPayment({
                 //`Elements` instance that was used to create the Payment Element
