@@ -77,7 +77,7 @@ def paymentsAPI(request):
         try:
             event = json.loads(data)
         except:
-            print('⚠️  Webhook error while parsing basic request.' + str(e))
+            print('Webhook error while parsing basic request.' + str(e))
             return JsonResponse(success=False)
         if end_point_secret:
             # Only verify the event if there is an endpoint secret defined
@@ -88,5 +88,11 @@ def paymentsAPI(request):
                     data, sig_header, end_point_secret
                 )
             except stripe.error.SignatureVerificationError as e:
-                print('⚠️  Webhook signature verification failed.' + str(e))
+                print('Webhook signature verification failed.' + str(e))
                 return JsonResponse(success=False)
+        if event and event['type'] == 'payment_intent.succeeded':
+            print('Webhook received!')
+            print(event)
+
+            return JsonResponse(success=True)
+

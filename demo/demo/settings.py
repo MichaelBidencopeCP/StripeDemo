@@ -18,6 +18,7 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 DJANGO_KEY = os.getenv('DJANGO_APP_KEY')
+HOSTS = os.getenv('HOSTS')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +34,7 @@ SECRET_KEY = DJANGO_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [HOSTS]
 
 
 # Application definition
