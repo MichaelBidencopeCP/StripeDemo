@@ -104,7 +104,7 @@
         }
         //submit payment
         async submit(){
-            elements = this.elements
+            var elements = this.elements
             const {error} = await this.stripe.confirmPayment({
                 //`Elements` instance that was used to create the Payment Element
                 elements,
