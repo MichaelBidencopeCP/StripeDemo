@@ -71,13 +71,15 @@
     class Payment{
         constructor() {
             this.modal = new bootstrap.Modal(document.getElementById('payment-modal'))
-            
+            this.stripe = Stripe('pk_test_51LO2UzLsiHUppK8IvSCSCgMMfIyEdiIxPtDTWDejQwr8zNEBmRuFySRT39GI2qAKBT9Ydz3lpYExl5o9WuTV0BUj00fHG9QJSf');
+            this.elements
+
         }
         async openPyament(plan) {
 
         
         
-            const stripe = Stripe('pk_test_51LO2UzLsiHUppK8IvSCSCgMMfIyEdiIxPtDTWDejQwr8zNEBmRuFySRT39GI2qAKBT9Ydz3lpYExl5o9WuTV0BUj00fHG9QJSf');
+            
             const response = await fetch('/secret/'+plan);
             const secret = await response.json();
             // Render the form using the clientSecret
@@ -91,10 +93,10 @@
             
     
             // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in step 2
-            const elements = stripe.elements(options);
+            this.elements = stripe.elements(options);
     
             // Create and mount the Payment Element
-            const paymentElement = elements.create('payment');
+            const paymentElement = this.elements.create('payment');
             paymentElement.mount('#payment-element')
             
             // modal object  show 
@@ -105,9 +107,34 @@
         close() {
             this.modal.hide();
         }
+        //submit payment
+        submit(){
+            
+            const {error} = await stripe.confirmPayment({
+                //`Elements` instance that was used to create the Payment Element
+                elements,
+                confirmParams: {
+                    return_url: 'http://18.222.176.91/',
+                },
+            });
+    
+            if (error) {
+                
+                const messageContainer = document.querySelector('#error-message');
+                messageContainer.textContent = error.message;
+            } else {
+                
+            }
+        }
     }
     var pays = new Payment();
     
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        pays.submit();
+        
+    });
 
 </script>
 {% endblock %}
