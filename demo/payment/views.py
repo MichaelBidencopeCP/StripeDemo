@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import stripe
 import os
 import dotenv
@@ -70,8 +71,9 @@ def secret(request, plan):
     client_secret = {'secret':intent['client_secret']}
 
     return JsonResponse(client_secret)
-
+@csrf_exempt
 def paymentsAPI(request):
+
     if request.method == 'POST':
         data = request.POST
         try:
