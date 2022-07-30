@@ -93,7 +93,7 @@
             
     
             // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in step 2
-            this.elements = stripe.elements(options);
+            this.elements = this.stripe.elements(options);
     
             // Create and mount the Payment Element
             const paymentElement = this.elements.create('payment');
@@ -106,7 +106,7 @@
         //submit payment
         async submit(){
             
-            const {error} = await stripe.confirmPayment({
+            const {error} = await this.stripe.confirmPayment({
                 //`Elements` instance that was used to create the Payment Element
                 elements,
                 confirmParams: {
