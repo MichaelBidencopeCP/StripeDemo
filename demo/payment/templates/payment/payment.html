@@ -103,12 +103,8 @@
             
             this.modal.show();
         }
-        //modal close
-        close() {
-            this.modal.hide();
-        }
         //submit payment
-        submit(){
+        aync submit(){
             
             const {error} = await stripe.confirmPayment({
                 //`Elements` instance that was used to create the Payment Element
@@ -126,7 +122,12 @@
                 
             }
         }
+        //modal close
+        close() {
+            this.modal.hide();
+        }
     }
+    
     var pays = new Payment();
     
     const form = document.getElementById('payment-form');
