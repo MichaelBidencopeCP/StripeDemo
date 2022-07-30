@@ -77,7 +77,7 @@ def paymentsAPI(request):
     if request.method == 'POST':
         data = request.POST
         try:
-            event = json.loads(data)
+            event = data
         except:
             print('Webhook error while parsing basic request.' + str(e))
             return JsonResponse(success=False)
