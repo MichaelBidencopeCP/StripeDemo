@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container pt-2">
+    <div class="modal pt-2" tabindex="-1" id="payment-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pay Here</h5>
+                    <button type="button" class="btn-close" onclick="pays.close()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="payment-form">
+                        <div id="payment-element">
+                        <!-- Elements will create form elements here -->
+                        </div>
+                        
+                        <div id="error-message">
+                        <!-- Display error message to your customers here -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="pays.close()">Close</button>
+                    <button id="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1>Payments </h1>
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Basic <strong>$10</strong> per month</h2>
+                    <p>
+                        
+                        Includes:<br>
+                        {% lorem 1 %}
+                    </p>
+                    <button class="btn btn-primary" onclick="pays.openPyament(0)">Pay Now</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Premium <strong>$20</strong> per month</h2>
+                    <p>
+                        
+                        Includes:<br>
+                        {% lorem 1 %}
+                    </p>
+                    <button class="btn btn-primary" onclick="pays.openPyament(1)">Pay Now</button>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<script>
+    
+    
+    class Payment{
+        constructor() {
+            this.modal = new bootstrap.Modal(document.getElementById('payment-modal'))
+            
+        }
+        async openPyament(plan) {
+
+        
+        
+            const stripe = Stripe('pk_test_51LO2UzLsiHUppK8IvSCSCgMMfIyEdiIxPtDTWDejQwr8zNEBmRuFySRT39GI2qAKBT9Ydz3lpYExl5o9WuTV0BUj00fHG9QJSf');
+            const response = await fetch('/secret/'+plan);
+            const secret = await response.json();
+            // Render the form using the clientSecret
+            const options = {
+            
+                clientSecret: secret['secret'],
+                // Fully customizable with appearance API.
+                appearance: {/*...*/},
+            };
+            
+            
+    
+            // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in step 2
+            const elements = stripe.elements(options);
+    
+            // Create and mount the Payment Element
+            const paymentElement = elements.create('payment');
+            paymentElement.mount('#payment-element')
+            
+            // modal object  show 
+            
+            this.modal.show();
+        }
+        //modal close
+        close() {
+            this.modal.hide();
+        }
+    }
+    var pays = new Payment();
+    
+
+</script>
+{% endblock %}

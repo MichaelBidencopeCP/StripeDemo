@@ -6,7 +6,10 @@
         <title>Demo</title>
         <!--boostrap and other-->
         <link rel="stylesheet" href="{% static 'bootstrap-5/css/bootstrap.min.css' %}">
-        
+        {% block header %}
+        {% endblock %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="{% static 'bootstrap-5/js/bootstrap.min.js' %}"></script>
     </head>
     <body>
         <!-- As a link -->
@@ -19,16 +22,16 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link" id="{% url 'index' %}" href="{% url 'index' %}">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="">Features</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">Pricing</a>
+                            <a class="nav-link" id="{% url 'payment_page' %}" href="{% url 'payment_page' %}">Pricing</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout_page' %}">Logout</a>
+                            <a class="nav-link" id="{% url 'payment_page' %}" href="{% url 'logout_page' %}">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -37,6 +40,38 @@
         {% block content %}
         {% endblock %}
     </body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="{% static 'bootstrap-5/js/bootstrap.min.js' %}"></script>
+    
+    <script>
+        //doc on ready
+        $(document).ready(function(){
+                //alert('hello');
+            
+            x = $(location).attr("href").length
+            first = 0
+            reversed = ""
+            while (x > 0){
+                x = x - 1
+                reversed = reversed + $(location).attr("href")[x]
+                if ($(location).attr("href")[x] == "/"){
+                    if (first){
+                        break
+                    }
+                    else{
+                        first = 1
+                    }
+                }
+                
+            }
+            //reverse string 
+            reversed = reversed.split("").reverse().join("");
+            //change active tab
+            $('.nav-link').each(function(){
+                if ($(this).attr('href') == reversed){
+                    $(this).addClass('active')
+                }
+            })
+        });
+
+    </script>
+    
 </html> 

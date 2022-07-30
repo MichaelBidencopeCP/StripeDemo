@@ -1,12 +1,27 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
+from django.http import JsonResponse
+import stripe
+import dotenv
+dotenv.load_dotenv()
+
+
+
+
+
+
+
+
 # Create your views here.
 def login_page(request):
+    
+    if request.user.is_authenticated:
+        return redirect('/payment')
     #check for post request
     if request.method == 'POST':
-        if request.POST['username1'] and request.POST['password']:
+        if 'username1' in request.POST.keys() and 'password' in request.POST.keys():
             username = request.POST['username1']
             password = request.POST['password']
             user = authenticate(request, username=username, password=password)
@@ -39,4 +54,15 @@ def logout_page(request):
 
 def payment_page(request):
     return render(request, 'payment/payment.html')
+
+def secret(request, plan):
+    stripe.api_key ='sk_test_51LO2UzLsiHUppK8I0QtiH1Z9QcpYq96eJTC4wqzQ2nTjCNBdWoyWVCOJToXgnYrl5Hx61icdKHpC1vJt8EKtwScT00fJTquJwV'
+    intent = stripe.PaymentIntent.create(
+        amount= 1000 if plan == 0 else 2000,
+        currency="usd",
+        automatic_payment_methods={"enabled": True},
+    )
     
+    client_secret = {'secret':intent['client_secret']}
+
+    return JsonResponse(client_secret)
